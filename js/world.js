@@ -137,9 +137,9 @@ const World = {
     east.forEach(([y, h, name], i) => this.addBuilding(116, y, 9, h, shopColors[(i + 3) % 8], null, name, { shop: true }));
     this.addBuilding(127, 14, 10, 14, '#2b2f3a', '#3c4252', 'CONDOS');
     this.addBuilding(127, 30, 10, 14, '#2f2b3a', '#433c52', 'TOUR');
-    // The Kings' hideout: alley behind the dépanneur
+    // The Mall Bums' hideout: alley behind the dépanneur
     this.fill(116, 59, 9, 14, T.PLAZA);
-    this.addBuilding(126, 54, 10, 20, '#3a1d22', '#52282f', 'KINGS HQ', { kings: true });
+    this.addBuilding(126, 54, 10, 20, '#3a1d22', '#52282f', 'BUMS HQ', { kings: true });
 
     // --- CP rail yard (locked until you get the gate code) ---
     this.fill(0, 82, MAP_W, 1, T.FENCE);
@@ -187,7 +187,7 @@ const World = {
       { x: 44 * TILE, y: 58.3 * TILE, text: 'PATINOIRE', size: 20, color: 'rgba(30,70,140,0.45)' },
       { x: 84 * TILE, y: 71.4 * TILE, text: 'STATIONNEMENT', size: 14, color: 'rgba(255,255,255,0.3)' },
       { x: 113.5 * TILE, y: 84.4 * TILE, text: 'CP RAIL · DÉFENSE DE PASSER', size: 12, color: 'rgba(255,220,80,0.8)' },
-      { x: 120.5 * TILE, y: 68 * TILE, text: 'KINGS 👑', size: 26, color: 'rgba(229,48,61,0.75)', rot: -0.15 },
+      { x: 120.5 * TILE, y: 68 * TILE, text: 'MALL BUMS', size: 24, color: 'rgba(229,48,61,0.75)', rot: -0.15 },
       { x: 20 * TILE, y: 42 * TILE, text: 'CÔTE SAINT-LUC', size: 22, color: 'rgba(255,255,255,0.12)' },
     );
 

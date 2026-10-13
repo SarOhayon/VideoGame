@@ -99,6 +99,7 @@ const Sprites = (() => {
 
     // torso
     ctx.fillStyle = o.body.c; rr(ctx, -10, -36, 20, 21, 5); ctx.fill();
+    if (o.body.kind === 'rabbi') { ctx.fillStyle = o.body.c; rr(ctx, -10.5, -20, 21, 13, 2); ctx.fill(); }
     switch (o.body.kind) {
       case 'jacket':
         ctx.fillStyle = '#262626';
@@ -120,13 +121,22 @@ const Sprites = (() => {
         ctx.fillStyle = '#1d2c6b'; ctx.fillRect(-10, -23.5, 20, 4);
         ctx.fillStyle = '#fff'; ctx.font = '900 6px Inter, Arial'; ctx.textAlign = 'center'; ctx.fillText('MTL', 0, -28);
         break;
-      case 'kings':
-        crown(ctx, 0, -22, 5, GOLD);
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(-7, -20, 14, 4);
+      case 'bums':
+        // oversized scruffy hoodie: patch, stain, pocket
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(-7, -22, 14, 5);
+        ctx.fillStyle = '#c9b48a'; ctx.fillRect(-7, -32, 5, 4);
+        ctx.fillStyle = 'rgba(40,30,20,0.35)'; circle(ctx, 4, -27, 2.5); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = '900 5px Inter, Arial'; ctx.textAlign = 'center'; ctx.fillText('MB', 0, -18.5);
         break;
       case 'kav':
         crown(ctx, 0, -21, 6, GOLD);
         ctx.fillStyle = GOLD; ctx.fillRect(-10, -18, 20, 1.5);
+        break;
+      case 'rabbi':
+        ctx.fillStyle = '#f4f4f4';
+        ctx.beginPath(); ctx.moveTo(-4, -36); ctx.lineTo(4, -36); ctx.lineTo(0, -26); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#2a2a2a'; ctx.fillRect(-0.6, -25, 1.2, 14);
+        ctx.fillStyle = '#3a3a3a'; for (const by of [-23, -18, -13]) { ctx.beginPath(); ctx.arc(2.5, by, 1, 0, TAU); ctx.fill(); }
         break;
       case 'puffer':
         ctx.fillStyle = 'rgba(255,255,255,0.1)';
@@ -136,6 +146,17 @@ const Sprites = (() => {
       case 'party':
         ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(-10, -27, 20, 3);
         break;
+    }
+    if (o.shoulders === 'tallit') {
+      ctx.fillStyle = '#f7f5ef';
+      rr(ctx, -11.5, -37, 23, 6, 3); ctx.fill();
+      ctx.fillRect(-11.5, -33, 6, 18); ctx.fillRect(5.5, -33, 6, 18);
+      ctx.fillStyle = '#1b1b1b';
+      for (const sy of [-26, -23]) { ctx.fillRect(-11.5, sy, 6, 1.4); ctx.fillRect(5.5, sy, 6, 1.4); }
+      ctx.fillStyle = '#e8e2cf'; ctx.fillRect(-7, -37, 14, 2.5);
+      ctx.strokeStyle = '#f7f5ef'; ctx.lineWidth = 0.8; ctx.beginPath();
+      for (const fx of [-10.5, -7, 6.5, 10]) { ctx.moveTo(fx, -15); ctx.lineTo(fx + 0.5, -10); }
+      ctx.stroke();
     }
     if (o.neck === 'chain' || o.neck === 'gold') {
       const col = o.neck === 'gold' ? GOLD : SILVER;
@@ -150,6 +171,7 @@ const Sprites = (() => {
       ctx.fillStyle = o.body.c; rr(ctx, 4, -32, 18, 6, 3); ctx.fill();
       ctx.fillStyle = o.skin; circle(ctx, 23, -29, 4.3); ctx.fill();
       if (o.hands === 'rings') { ctx.fillStyle = SILVER; ctx.fillRect(21, -32.5, 1.8, 7); ctx.fillRect(24.2, -32.5, 1.6, 7); }
+      if (o.wrist === 'rolex') { ctx.fillStyle = GOLD; ctx.fillRect(16, -32.5, 3, 7); ctx.fillStyle = '#0f3d2a'; ctx.fillRect(16.5, -30.5, 2, 2.5); }
       ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.moveTo(30, -34); ctx.lineTo(36, -36); ctx.moveTo(31, -29); ctx.lineTo(38, -29); ctx.moveTo(30, -24); ctx.lineTo(36, -22); ctx.stroke();
     } else if (o.phone) {
@@ -161,6 +183,7 @@ const Sprites = (() => {
       ctx.fillStyle = o.body.c; rr(ctx, 8, -33 + swing * 0.3, 5, 15, 2.5); ctx.fill();
       ctx.fillStyle = o.skin; circle(ctx, 10.5, -17 + swing * 0.3, 3); ctx.fill();
       if (o.hands === 'rings') { ctx.fillStyle = SILVER; ctx.fillRect(9, -18 + swing * 0.3, 3, 1.5); }
+      if (o.wrist === 'rolex') { ctx.fillStyle = GOLD; ctx.fillRect(7.6, -21.5 + swing * 0.3, 5.8, 2.6); ctx.fillStyle = '#0f3d2a'; ctx.fillRect(9.6, -21 + swing * 0.3, 1.8, 1.6); }
     }
 
     // head
@@ -202,6 +225,12 @@ const Sprites = (() => {
         ctx.strokeStyle = '#111'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(4, hy - 8.8, 2.1, 0.15 * Math.PI, 0.85 * Math.PI, true); ctx.stroke();
         ctx.fillStyle = '#111'; ctx.fillRect(6, hy - 4.5, 8, 2.5);
         break;
+      case 'fedora':
+        ctx.fillStyle = '#0d0d0d';
+        ctx.beginPath(); ctx.ellipse(0, hy - 5, 14, 3.2, 0, 0, TAU); ctx.fill();
+        rr(ctx, -8, hy - 15, 16, 10, 3); ctx.fill();
+        ctx.fillStyle = '#2a2a2a'; ctx.fillRect(-8, hy - 8, 16, 2);
+        break;
       case 'beanie':
         ctx.fillStyle = '#141414'; ctx.beginPath(); ctx.arc(0, hy - 2, 9.8, Math.PI, 0); ctx.fill();
         ctx.fillStyle = '#262626'; ctx.fillRect(-10, hy - 4.5, 20, 3.5);
@@ -218,7 +247,7 @@ const Sprites = (() => {
   }
 
   const OUTFIT = {
-    body: { jacket: { c: '#121212', kind: 'jacket' }, hoodie: { c: '#1b1b1d', kind: 'hoodie' }, habs: { c: '#b5121b', kind: 'habs' } },
+    body: { rabbi: { c: '#0e0e10', kind: 'rabbi' }, jacket: { c: '#121212', kind: 'jacket' }, hoodie: { c: '#1b1b1d', kind: 'hoodie' }, habs: { c: '#b5121b', kind: 'habs' } },
     legs: { jeans: { c: '#22262e', kind: 'jeans' }, leather: { c: '#0b0b0b', kind: 'leather' } },
   };
 
@@ -227,7 +256,7 @@ const Sprites = (() => {
       x, y, facing: st.facing, walk: st.walk, moving: st.moving, punch: st.punch, skate: st.skate, blink: st.blink,
       scale: st.scale || 1, dance: st.dance, skin: '#c99872', hair: 'curly',
       body: OUTFIT.body[outfit.body] || OUTFIT.body.jacket, legs: OUTFIT.legs[outfit.legs] || OUTFIT.legs.jeans,
-      shoes: '#f3f3f3', head: outfit.head, face: outfit.face, hands: outfit.hands, neck: outfit.neck, earring: true,
+      shoes: '#f3f3f3', head: outfit.head, face: outfit.face, hands: outfit.hands, neck: outfit.neck, wrist: outfit.wrist, shoulders: outfit.shoulders, earring: true,
     });
   }
 
@@ -235,6 +264,13 @@ const Sprites = (() => {
     drawHuman(ctx, {
       x, y, facing, dance: t, scale, skin: '#efc6a3', hair: 'long', hairColor: '#5b3a22', lashes: true, hoops: true,
       body: { c: '#1e1e26', kind: 'puffer' }, legs: { c: '#17171c', kind: 'plain' }, shoes: '#f5f5f5', phone: true,
+    });
+  }
+
+  function drawNoa(ctx, x, y, t, facing, scale = 1) {
+    drawHuman(ctx, {
+      x, y, facing, dance: t + 0.8, scale, skin: '#f1cdb0', hair: 'long', hairColor: '#c9a66e', lashes: true,
+      body: { c: '#e8e0d2', kind: 'puffer' }, legs: { c: '#2a2a33', kind: 'plain' }, shoes: '#f5f5f5',
     });
   }
 
@@ -255,11 +291,11 @@ const Sprites = (() => {
   }
 
   function drawKing(ctx, e, t) {
-    const body = e.kind === 'runner' ? '#d4571c' : '#b3202a';
+    const body = e.kind === 'runner' ? '#d4571c' : (e.color || '#6b6f4e');
     if (e.ko) {
       ctx.save(); ctx.globalAlpha = Math.max(0, 1 - e.koT / 1.2);
       ctx.translate(e.x, e.y); ctx.rotate((Math.PI / 2) * (e.facing || 1));
-      drawHuman(ctx, { x: 0, y: 0, facing: 1, skin: e.skin, hair: 'hood', body: { c: body, kind: 'kings' }, legs: { c: '#55585f', kind: 'plain' }, shoes: '#111' });
+      drawHuman(ctx, { x: 0, y: 0, facing: 1, skin: e.skin, hair: 'hood', body: { c: body, kind: 'bums' }, legs: { c: '#4a5a78', kind: 'plain' }, shoes: '#8a7a66' });
       ctx.restore();
       stars(ctx, e.x, e.y - 14, t);
       return;
@@ -267,7 +303,7 @@ const Sprites = (() => {
     drawHuman(ctx, {
       x: e.x, y: e.y, facing: e.facing, walk: e.walk, moving: e.moving, punch: e.punchT > 0, skate: e.kind === 'runner',
       blink: e.hurtT > 0 && Math.floor(t * 30) % 2 === 0, skin: e.skin, hair: 'hood', headband: e.kind === 'runner',
-      body: { c: body, kind: 'kings' }, legs: { c: '#55585f', kind: 'plain' }, shoes: '#111',
+      body: { c: body, kind: 'bums' }, legs: { c: '#4a5a78', kind: 'plain' }, shoes: '#8a7a66',
     });
     if (e.stun > 0.2) stars(ctx, e.x, e.y - 60, t);
     ctx.font = '800 10px Inter, Arial'; ctx.textAlign = 'center';
@@ -366,6 +402,20 @@ const Sprites = (() => {
         ctx.fillStyle = '#3a2a1a'; circle(ctx, p.x, y, 2.5); ctx.fill();
         ctx.fillStyle = '#fff6d6'; for (const [dx, dy] of [[-4, -3], [3, -4], [4, 2], [-3, 3], [0, -5]]) ctx.fillRect(p.x + dx, y + dy, 1.4, 1.4);
         break;
+      case 'rolex': {
+        ctx.save();
+        ctx.shadowBlur = 18; ctx.shadowColor = '#ffe9a0';
+        ctx.fillStyle = '#d9a520'; rr(ctx, p.x - 4, y - 15, 8, 30, 2); ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'; for (let k = -13; k < 14; k += 4) ctx.fillRect(p.x - 4, y + k, 8, 1);
+        ctx.fillStyle = GOLD; circle(ctx, p.x, y, 8.5); ctx.fill();
+        ctx.fillStyle = '#0f3d2a'; circle(ctx, p.x, y, 6); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(p.x, y); ctx.lineTo(p.x, y - 4.5); ctx.moveTo(p.x, y); ctx.lineTo(p.x + 3.5, y + 1); ctx.stroke();
+        ctx.fillStyle = GOLD; ctx.fillRect(p.x - 1, y - 6, 2, 1.5);
+        ctx.restore();
+        for (let i = 0; i < 4; i++) { const a = t * 2 + i * 1.57; ctx.fillStyle = '#fff'; ctx.fillRect(p.x + Math.cos(a) * 18, y + Math.sin(a) * 18, 2, 2); }
+        break;
+      }
       case 'chain': {
         ctx.save();
         ctx.shadowBlur = 18; ctx.shadowColor = '#ffffff';
@@ -442,18 +492,18 @@ const Sprites = (() => {
         drawKing(ctx, { x: 0, y: 0, facing: 1, walk: 0, moving: false, punchT: 0, kind: 'king', skin: '#b07a55', name: '', hp: 1, maxHp: 1, hurtT: 0, stun: 0 }, 0);
         ctx.restore();
         ctx.save(); ctx.translate(W * 0.68, H * 0.42); ctx.scale(3, 3);
-        drawPickup(ctx, { type: 'chain', x: 0, y: 0, seed: 0 }, 1.2);
+        drawPickup(ctx, { type: 'rolex', x: 0, y: 0, seed: 0 }, 1.2);
         ctx.restore();
-        ctx.font = '900 18px Inter, Arial'; ctx.fillStyle = GOLD; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillText('@cavendishkings', 14, 30);
+        ctx.font = '900 18px Inter, Arial'; ctx.fillStyle = GOLD; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillText('@cavendishmallbums', 14, 30);
         break;
       case 'boss':
         ctx.save(); ctx.translate(W / 2, H * 0.97); ctx.scale(2.4, 2.4);
         drawBoss(ctx, { x: 0, y: 0, facing: -1, state: 'idle', hurtT: 0, ko: false, dir: { x: 1, y: 0 } }, 0);
         ctx.restore();
         break;
-      case 'chain':
+      case 'rolex':
         ctx.save(); ctx.translate(W / 2, H * 0.42); ctx.scale(4, 4); ctx.translate(-W / 2, -H * 0.42);
-        drawPickup(ctx, { type: 'chain', x: W / 2, y: H * 0.45, seed: 0 }, 0.6);
+        drawPickup(ctx, { type: 'rolex', x: W / 2, y: H * 0.45, seed: 0 }, 0.6);
         ctx.restore();
         break;
       case 'selfie':
@@ -485,5 +535,5 @@ const Sprites = (() => {
     ctx.restore();
   }
 
-  return { drawHuman, drawArieh, drawEmma, drawGuest, drawKing, drawBoss, drawTruck, drawPickup, emmaFace, snapPhoto, titleArt, cross, OUTFIT };
+  return { drawHuman, drawArieh, drawEmma, drawNoa, drawGuest, drawKing, drawBoss, drawTruck, drawPickup, emmaFace, snapPhoto, titleArt, cross, OUTFIT };
 })();

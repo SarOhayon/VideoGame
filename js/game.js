@@ -1,5 +1,5 @@
 // DRIP DROP: Brandeis Block — main loop, story, driving, combat, saving.
-const SAVE_KEY = 'dripdrop-brandeis-v1';
+const SAVE_KEY = 'dripdrop-brandeis-v2';
 const TAU = Math.PI * 2;
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -10,13 +10,17 @@ const ITEMS = [
   { id: 'hoodie', slot: 'body', name: 'Cross Patch Hoodie', price: 60, emoji: '🖤', desc: 'Huge silver cross print. +20 max HP.', stats: { hp: 20 } },
   { id: 'habs', slot: 'body', name: 'Habs Retro Jersey', price: 120, emoji: '🏒', desc: 'Bleu-blanc-rouge. +35 max HP. Go Habs Go.', stats: { hp: 35 } },
   { id: 'jeans', slot: 'legs', name: 'Cross Patch Denim', price: 0, emoji: '👖', desc: 'Starter. Black denim with leather cross patches.', stats: {} },
+  { id: 'rabbi', slot: 'body', name: 'Rabbi Suit', price: 90, emoji: '🎩', desc: 'Long black coat, crisp white shirt. +30 max HP.', stats: { hp: 30 } },
   { id: 'leather', slot: 'legs', name: 'Cemetery Leather Pants', price: 80, emoji: '⚫', desc: 'Black leather, silver crosses. +15% speed.', stats: { speed: 0.15 } },
   { id: 'rings', slot: 'hands', name: 'Dagger Ring Stack', price: 45, emoji: '💍', desc: 'Sterling rings on every finger. +30% punch damage.', stats: { dmg: 0.3 } },
   { id: 'trucker', slot: 'head', name: 'Horseshoe Trucker Hat', price: 50, emoji: '🧢', desc: 'Black + white mesh. +25% silver from KOs.', stats: { silver: 0.25 } },
+  { id: 'fedora', slot: 'head', name: 'Black Fedora', price: 55, emoji: '🎩', desc: 'Wide brim, goes with the Rabbi Suit. +10% speed.', stats: { speed: 0.1 } },
   { id: 'beanie', slot: 'head', name: 'Cross Beanie', price: 35, emoji: '🧶', desc: "It's cold in CSL. Heal 1 HP/sec.", stats: { regen: 1 } },
-  { id: 'shades', slot: 'face', name: 'Silver-Arm Shades', price: 65, emoji: '🕶️', desc: 'Kings notice you from 30% closer.', stats: { stealth: 0.3 } },
+  { id: 'shades', slot: 'face', name: 'Silver-Arm Shades', price: 65, emoji: '🕶️', desc: 'Mall Bums notice you from 30% closer.', stats: { stealth: 0.3 } },
+  { id: 'tallit', slot: 'shoulders', name: 'Tallit', price: 75, emoji: '🪶', desc: 'White prayer shawl with black stripes and tzitzit. Heal 1.5 HP/sec.', stats: { regen: 1.5 } },
   { id: 'rims', slot: 'truck', name: 'Chrome Cybertruck Rims', price: 70, emoji: '🛞', desc: '+20% Cybertruck top speed.', stats: { truck: 0.2 } },
-  { id: 'chain', slot: 'neck', name: 'Silver Cross Chain', price: null, quest: true, emoji: '⛓️', desc: 'YOUR chain. +20% damage, +10 HP.', stats: { dmg: 0.2, hp: 10 } },
+  { id: 'chain', slot: 'neck', name: 'Silver Cross Chain', price: 0, emoji: '⛓️', desc: 'Starter. Sterling cross pendant, never comes off.', stats: {} },
+  { id: 'rolex', slot: 'wrist', name: 'Gold Rolex', price: null, quest: true, emoji: '⌚', desc: 'YOUR watch. +20% damage, +10 HP.', stats: { dmg: 0.2, hp: 10 } },
 ];
 const itemById = (id) => ITEMS.find((i) => i.id === id);
 
@@ -28,12 +32,12 @@ const AMBIENT = [
   ['the rink by the école is open, the ice is SO slippery lol ⛸️'],
   ['stop by 5911 and hit the Drip Shop if u got silver 🛍️ (E at ur door)'],
   ['my mom says hi 😭 also be safe out there'],
-  ['someone said the Kings are scared of u now 💀'],
+  ['someone said the Mall Bums are scared of u now 💀'],
   ['ok who keeps beeping a cybertruck horn on Brandeis 😂', 'selfie-dog', 'it was u wasn\'t it'],
 ];
 
 const DEAD_LINES = [
-  'Emma: "get up bro 😭 ur chain is still out there"',
+  'Emma: "get up bro 😭 ur Rolex is still out there"',
   'Emma: "nah that was a cheap shot. run it back"',
   'Emma: "eat a poutine and try again 🍟"',
   'Emma: "ur streak is still alive, don\'t fold now 🔥"',
@@ -54,8 +58,8 @@ const STEPS = [
     id: 'truck', obj: () => 'Get in the black Cybertruck in the driveway', target: () => G.truck,
     start(mode) {
       if (mode === 'respawn') return;
-      UI.snap('ARIEH 😭😭 the Cavendish Kings just posted UR silver cross chain on their story', 'story', '"new drip 👑💀"');
-      UI.snap('they took it out of ur gym bag at the mall. we\'re getting it back fr');
+      UI.snap('ARIEH 😭😭 the Cavendish Mall Bums just posted UR ROLEX on their story', 'story', '"new watch who dis ⌚💀"');
+      UI.snap('they swiped it out of ur gym bag at the mall. we\'re getting it back fr');
       UI.snap('ur dad\'s black Cybertruck is in the driveway at 5911 👀 keys are in it. walk up to it + press E');
     },
     done: () => G.player.inTruck,
@@ -70,12 +74,12 @@ const STEPS = [
     done: () => dist(G.player, World.points.mall) < 280,
   },
   {
-    id: 'mallfight', obj: () => `Beat the Kings at Cavendish Mall (${G.questKills}/4)`, target: () => nearestTagged('quest'),
+    id: 'mallfight', obj: () => `Beat the Mall Bums at Cavendish Mall (${G.questKills}/4)`, target: () => nearestTagged('quest'),
     start(mode) {
       G.questKills = 0;
       G.spawnGroup(World.points.mall, 4, { tag: 'quest' });
       if (mode === 'respawn') return;
-      UI.snap('4 of them. red hoodies w/ the crown 👑', 'selfie-shades', 'show them the drip 💀');
+      UI.snap('4 of them. crusty hoodies, been loitering by the food court all day 💀', 'selfie-shades', 'show them the drip 💀');
       UI.snap(Input.touch ? 'hop out (E) and hit 👊 to punch' : 'hop out (E) and press Space to punch. u can also bump them w/ the truck lol');
     },
     done: () => G.questKills >= 4,
@@ -87,13 +91,13 @@ const STEPS = [
       G.enemies.push(new King(World.points.skatepark.x, World.points.skatepark.y, { kind: 'runner', tag: 'speedy', name: 'SPEEDY', hp: 1, speed: 170 }));
       if (mode === 'respawn') return;
       UI.snap('one of them dropped his phone lol');
-      UI.snap('it says the chain is with SPEEDY at the skatepark next to the Aquatic Centre 🛹');
+      UI.snap('it says the Rolex is with SPEEDY at the skatepark next to the Aquatic Centre 🛹');
       UI.snap(Input.touch ? 'he\'s fast. tap 🛹 to skate and run him down' : 'he\'s fast. press Shift to skate and run him down');
     },
     done: () => G.flags.speedyCaught,
   },
   {
-    id: 'westminster', obj: () => 'Find the Kings\' spot behind the dépanneur on Westminster', target: () => World.points.hideout,
+    id: 'westminster', obj: () => 'Find the Mall Bums\' spot behind the dépanneur on Westminster', target: () => World.points.hideout,
     start(mode) {
       if (mode === 'respawn') return;
       UI.snap('SPEEDY FOLDED 😂 he says King Kav took it to their spot on Westminster, behind the dépanneur');
@@ -102,7 +106,7 @@ const STEPS = [
     done: () => dist(G.player, World.points.hideout) < 240,
   },
   {
-    id: 'hideout', obj: () => `Clear the Kings' hideout (${G.questKills}/5)`, target: () => nearestTagged('quest'),
+    id: 'hideout', obj: () => `Clear the Mall Bums' hideout (${G.questKills}/5)`, target: () => nearestTagged('quest'),
     start(mode) {
       G.questKills = 0;
       G.spawnGroup(World.points.hideout, 5, { tag: 'quest', hp: 44 });
@@ -117,7 +121,7 @@ const STEPS = [
       World.gateOpen = true;
       if (mode === 'respawn') return;
       UI.snap('the last guy had a note: "CP yard gate code 1904" 💀 the gate is OPEN');
-      UI.snap('King Kav is at the CP rail yard with ur chain. bottom of Westminster. be careful fr');
+      UI.snap('King Kav (the Mall Bums\' boss) is at the CP rail yard wearing UR Rolex 😤 bottom of Westminster. be careful fr');
     },
     done: () => G.player.y > 83.6 * TILE,
   },
@@ -134,20 +138,21 @@ const STEPS = [
     done: () => G.flags.bossDown,
   },
   {
-    id: 'chain', obj: () => 'Grab your silver cross chain ⛓️', target: () => G.pickups.find((p) => p.type === 'chain'),
+    id: 'watch', obj: () => 'Grab your gold Rolex ⌚', target: () => G.pickups.find((p) => p.type === 'rolex'),
     start() {
-      if (!G.pickups.some((p) => p.type === 'chain')) G.pickups.push({ type: 'chain', x: World.points.arena.x, y: World.points.arena.y, seed: 0, t: 0 });
-      UI.snap('HE\'S DOWN 😭😭 GRAB UR CHAIN');
+      if (!G.pickups.some((p) => p.type === 'rolex')) G.pickups.push({ type: 'rolex', x: World.points.arena.x, y: World.points.arena.y, seed: 0, t: 0 });
+      UI.snap('HE\'S DOWN 😭😭 GRAB UR ROLEX');
     },
-    done: () => G.flags.chainBack,
+    done: () => G.flags.watchBack,
   },
   {
     id: 'party', obj: () => 'Head back to 5911 Brandeis. Emma\'s throwing you a party 🎉', target: () => G.npcs.find((n) => n.kind === 'emma') || World.points.home,
     start(mode) {
       startParty();
       if (mode === 'respawn') return;
-      UI.snap('THE CHAIN IS BACK 🔥🔥🔥', 'chain', 'where it belongs ⛓️');
+      UI.snap('THE ROLEX IS BACK 🔥🔥🔥', 'rolex', 'back on ur wrist ⌚');
       UI.snap('everyone\'s at urs, I\'m on the front lawn at 5911 🎉 come thru', 'selfie-hearts', 'party at 5911 🎉');
+      UI.snap('oh and Noa\'s here 👀 she heard what u did');
     },
     done: () => dist(G.player, G.npcs.find((n) => n.kind === 'emma') || World.points.home) < 70,
   },
@@ -175,7 +180,8 @@ function startParty() {
   const h = World.points.home;
   G.npcs.push({ kind: 'emma', x: h.x + 40, y: h.y + 22, facing: -1, seed: 0 });
   const cols = ['#c77dff', '#3ddcff', '#ff6b9a', '#9dff5c', '#ffb347'];
-  const spots = [[-70, 20], [-110, 30], [90, 34], [-40, 50], [130, 20]];
+  G.npcs.push({ kind: 'noa', x: h.x - 36, y: h.y + 46, facing: 1, seed: 0.8 });
+  const spots = [[-80, 20], [-120, 34], [90, 34], [130, 52], [150, 18]];
   spots.forEach(([dx, dy], i) => G.npcs.push({
     kind: 'guest', x: h.x + dx, y: h.y + dy, facing: dx > 0 ? -1 : 1, seed: i * 1.7, color: cols[i],
     skin: SKINS[i % SKINS.length], hair: i % 2 ? 'long' : 'buzz', hairColor: ['#2a1d14', '#c9a35a', '#111', '#6b3a1e', '#3a2a20'][i],
@@ -184,7 +190,7 @@ function startParty() {
 
 // ---------------- Game controller ----------------
 const Game = {
-  OPTIONAL_SLOTS: ['head', 'face', 'hands', 'neck', 'truck'],
+  OPTIONAL_SLOTS: ['head', 'face', 'hands', 'neck', 'wrist', 'shoulders', 'truck'],
 
   init() {
     G.canvas = document.getElementById('game');
@@ -223,7 +229,7 @@ const Game = {
 
   // ---------- Save ----------
   defaultSave() {
-    return { silver: 0, owned: ['jacket', 'jeans'], equipped: { body: 'jacket', legs: 'jeans', head: null, face: null, hands: null, neck: null, truck: null }, step: 0, streak: 0, kos: 0, time: 0 };
+    return { silver: 0, owned: ['jacket', 'jeans', 'chain'], equipped: { body: 'jacket', legs: 'jeans', head: null, face: null, hands: null, neck: 'chain', wrist: null, shoulders: null, truck: null }, step: 0, streak: 0, kos: 0, time: 0 };
   },
   loadSave() {
     try {
@@ -245,7 +251,7 @@ const Game = {
   },
   outfit() {
     const e = G.save.equipped;
-    return { body: e.body, legs: e.legs, head: e.head, face: e.face, hands: e.hands, neck: e.neck };
+    return { body: e.body, legs: e.legs, head: e.head, face: e.face, hands: e.hands, neck: e.neck, wrist: e.wrist, shoulders: e.shoulders };
   },
 
   // ---------- Flow ----------
@@ -254,7 +260,7 @@ const Game = {
     G.player = { x: sp.x, y: sp.y, r: 10, vx: 0, vy: 0, facing: 1, dir: { x: 0, y: 1 }, walk: 0, moving: false, skate: false, hp: G.stats.maxHp, inv: 0, atkCd: 0, punchT: 0, inTruck: false };
     G.truck = { x: tp.x, y: tp.y, angle: tp.a, speed: 0 };
     G.enemies = []; G.boss = null; G.npcs = []; G.particles = []; G.floaters = [];
-    G.pickups = G.pickups.filter((p) => p.type === 'chain');
+    G.pickups = G.pickups.filter((p) => p.type === 'rolex');
     World.party = false;
     G.flags = {};
     G.cam.x = sp.x - innerWidth / 2; G.cam.y = sp.y - innerHeight / 2;
@@ -326,8 +332,9 @@ const Game = {
     G.state = 'ending';
     const c = UI.el['end-art'].getContext('2d');
     c.clearRect(0, 0, 480, 300);
-    Sprites.drawArieh(c, 170, 285, { facing: 1, scale: 4.4 }, this.outfit());
-    Sprites.drawEmma(c, 320, 285, 0, -1, 4.4);
+    Sprites.drawNoa(c, 95, 285, 0, 1, 4.2);
+    Sprites.drawArieh(c, 240, 285, { facing: 1, scale: 4.4 }, this.outfit());
+    Sprites.drawEmma(c, 385, 285, 0, -1, 4.2);
     const mins = Math.floor(G.save.time / 60), secs = Math.floor(G.save.time % 60);
     UI.el['end-stats'].innerHTML = `<span class="chip">👊 ${G.save.kos} KOs</span><span class="chip">◆ ${G.save.silver} silver</span><span class="chip">🔥 ${G.save.streak} streak</span><span class="chip">⏱ ${mins}m ${secs}s</span>`;
     UI.show('ending');
@@ -524,7 +531,7 @@ const Game = {
       tr.x = nx; tr.y = ny;
     }
 
-    // bump Kings out of the way
+    // bump Mall Bums out of the way
     if (Math.abs(tr.speed) > 110) {
       const targets = G.boss ? [...G.enemies, G.boss] : G.enemies;
       for (const e of targets) {
@@ -600,14 +607,14 @@ const Game = {
           case 'silver': G.save.silver += k.v; Sound.play.coin(); G.floater(k.x, k.y - 20, `+${k.v}`, '#dfe3e8'); break;
           case 'poutine': p.hp = Math.min(G.stats.maxHp, p.hp + 50); Sound.play.heal(); G.floater(k.x, k.y - 20, '🍟 POUTINE +50', '#ffcc33'); G.foodT.poutine = 25; break;
           case 'bagel': p.hp = Math.min(G.stats.maxHp, p.hp + 25); Sound.play.heal(); G.floater(k.x, k.y - 20, '🥯 BAGEL +25', '#ffcc33'); if (k.shop) G.foodT.bagel = 25; break;
-          case 'chain':
-            G.flags.chainBack = true;
-            if (!G.save.owned.includes('chain')) G.save.owned.push('chain');
-            G.save.equipped.neck = 'chain';
+          case 'rolex':
+            G.flags.watchBack = true;
+            if (!G.save.owned.includes('rolex')) G.save.owned.push('rolex');
+            G.save.equipped.wrist = 'rolex';
             this.computeStats(); p.hp = G.stats.maxHp;
             Sound.play.win(); G.shake = 6;
             G.burst(k.x, k.y, '#ffffff', 30);
-            G.floater(k.x, k.y - 40, '⛓️ CHAIN SECURED', '#ffffff');
+            G.floater(k.x, k.y - 40, '⌚ ROLEX SECURED', '#ffffff');
             break;
         }
       }
@@ -630,7 +637,7 @@ const Game = {
         G.pickups.push({ type: f, x: pt.x, y: pt.y, seed: Math.random() * 10, t: 1, shop: true });
       }
     }
-    // roaming Kings
+    // roaming Mall Bums
     G.spawnT -= dt;
     if (G.spawnT > 0 || G.save.step < 2) return;
     G.spawnT = 5;
@@ -709,6 +716,7 @@ const Game = {
     if (b && inView(b, 120)) draw.push({ y: b.y, f: () => Sprites.drawBoss(ctx, b, G.time) });
     for (const n of G.npcs) if (inView(n)) {
       if (n.kind === 'emma') draw.push({ y: n.y, f: () => { Sprites.drawEmma(ctx, n.x, n.y, G.time, n.facing); ctx.font = '800 11px Inter, Arial'; ctx.textAlign = 'center'; ctx.fillStyle = '#fffc00'; ctx.fillText('EMMA FISHER', n.x, n.y - 64); } });
+      else if (n.kind === 'noa') draw.push({ y: n.y, f: () => { Sprites.drawNoa(ctx, n.x, n.y, G.time, n.facing); ctx.font = '800 11px Inter, Arial'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffd1e0'; ctx.fillText('NOA', n.x, n.y - 64); } });
       else draw.push({ y: n.y, f: () => Sprites.drawGuest(ctx, n, G.time) });
     }
     draw.sort((a, c) => a.y - c.y);
@@ -829,7 +837,7 @@ G.onKO = (e) => {
   G.burst(e.x, e.y - 20, e.kind === 'boss' ? '#c77dff' : '#ff4d5a', e.kind === 'boss' ? 30 : 12);
   if (e.kind === 'boss') {
     G.flags.bossDown = true;
-    G.pickups.push({ type: 'chain', x: e.x, y: e.y, seed: 0, t: 0, vx: 0, vy: 0 });
+    G.pickups.push({ type: 'rolex', x: e.x, y: e.y, seed: 0, t: 0, vx: 0, vy: 0 });
     for (let i = 0; i < 15; i++) G.dropCoin(e.x, e.y, 4);
     for (const k of G.enemies) if (k.tag === 'boss' && !k.ko) { k.ko = true; k.koT = 0; }
     return;

@@ -1,4 +1,4 @@
-// Collision helpers + enemies (the Cavendish Kings, Speedy, and King Kav).
+// Collision helpers + enemies (the Mall Bums, Speedy, and King Kav).
 function circleHitsSolid(x, y, r) {
   const x0 = Math.floor((x - r) / TILE), x1 = Math.floor((x + r) / TILE);
   const y0 = Math.floor((y - r) / TILE), y1 = Math.floor((y + r) / TILE);
@@ -23,7 +23,8 @@ function moveEntity(e, dx, dy) {
   return hit;
 }
 
-const KING_NAMES = ['Lil Crown', 'K-Dawg', 'Prince', 'Duke', 'Jester', 'Rook', 'Baron', 'Knight', 'Count', 'Squire', 'Bishop', 'Earl'];
+const KING_NAMES = ['Food Court', 'Escalator', 'Lil Kiosk', 'Sample Guy', 'Mall Rat', 'Bench', 'Pretzel', 'Loiter', 'Free Wifi', 'Parking Lot', 'Rerun', 'Sneaky'];
+const BUM_COLORS = ['#6b6f4e', '#5a5f6b', '#7a6a55', '#6e5a5a', '#4f5f5a'];
 const SKINS = ['#b07a55', '#8d5a3b', '#d9a77e', '#6b4430', '#c48a64', '#e8bf98'];
 
 class King {
@@ -38,6 +39,7 @@ class King {
     this.region = opts.region || null;
     this.name = opts.name || KING_NAMES[Math.floor(Math.random() * KING_NAMES.length)];
     this.skin = SKINS[Math.floor(Math.random() * SKINS.length)];
+    this.color = BUM_COLORS[Math.floor(Math.random() * BUM_COLORS.length)];
     this.home = { x, y };
     this.facing = Math.random() < 0.5 ? 1 : -1;
     this.vx = 0; this.vy = 0; this.walk = 0; this.moving = false;
@@ -186,7 +188,7 @@ class Boss {
     if (!this.minions && this.hp < this.maxHp * 0.5) {
       this.minions = true;
       G.spawnGroup({ x: this.x, y: this.y }, 2, { tag: 'boss' });
-      G.floater(this.x, this.y - 100, 'KINGS! GET HIM!', '#ff4d5a');
+      G.floater(this.x, this.y - 100, 'BUMS! GET HIM!', '#ff4d5a');
     }
   }
 
