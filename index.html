@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d14">
+  <title>Drip Drop: Brandeis Block</title>
+  <meta name="description" content="Arieh's silver cross chain got stolen. Emma Fisher has the intel on Snap. Get it back across Côte Saint-Luc.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="dmg"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="hud-left">
+      <div class="hp"><div id="hp-fill"></div><span id="hp-text">100</span></div>
+      <div class="chips">
+        <span class="chip" id="silver">◆ 0</span>
+        <span class="chip" id="streak">🔥 0</span>
+        <span class="chip" id="mode">🚶</span>
+      </div>
+    </div>
+    <div id="objective"><span class="obj-kicker">OBJECTIVE</span><span id="obj-text"></span></div>
+    <div id="snapmap">
+      <canvas id="minimap" width="168" height="120"></canvas>
+      <div class="snapmap-label">SNAP MAP</div>
+    </div>
+    <div id="bossbar" class="hidden"><div class="boss-name">👑 KING KAV</div><div class="boss-track"><div id="boss-fill"></div></div></div>
+    <div id="prompt" class="hidden"></div>
+    <button id="pause-btn" aria-label="Pause">II</button>
+  </div>
+
+  <!-- Emma's snaps -->
+  <div id="snap" class="hidden">
+    <div class="snap-head">
+      <canvas id="snap-avatar" width="88" height="88"></canvas>
+      <div class="snap-who">
+        <div class="snap-name">Emma Fisher</div>
+        <div class="snap-sub">Snapchat · <span id="snap-streak">🔥 0</span></div>
+      </div>
+      <div id="snap-timer"></div>
+    </div>
+    <canvas id="snap-photo" width="480" height="340" class="hidden"></canvas>
+    <div class="snap-from">EMMA</div>
+    <div id="snap-text"></div>
+  </div>
+
+  <!-- Touch controls -->
+  <div id="touch" class="hidden">
+    <div id="joy-zone"><div id="joy"><div id="knob"></div></div></div>
+    <div id="buttons">
+      <button class="tbtn big" data-act="attack" id="btn-attack">👊</button>
+      <button class="tbtn" data-act="interact">E</button>
+      <button class="tbtn" data-act="skate" id="btn-skate">🛹</button>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div id="title" class="overlay">
+    <div class="panel title-card">
+      <div class="kicker">CÔTE SAINT-LUC · QC · 5911 BRANDEIS</div>
+      <h1>DRIP DROP</h1>
+      <div class="title-sub">BRANDEIS BLOCK</div>
+      <canvas id="title-art" width="720" height="360"></canvas>
+      <p class="blurb">The Cavendish Kings stole <b>Arieh</b>'s silver cross chain. <b>Emma Fisher</b> has the intel on Snap. Grab the black Cybertruck and get it back before the party.</p>
+      <div class="btn-row">
+        <button id="btn-continue" class="btn hidden">CONTINUE</button>
+        <button id="btn-new" class="btn primary">NEW GAME</button>
+      </div>
+      <div class="controls">
+        <div><b>Move</b> WASD / Arrows</div>
+        <div><b>Punch / Honk</b> Space</div>
+        <div><b>Truck · Shop · Talk</b> E</div>
+        <div><b>Skateboard</b> Shift</div>
+        <div><b>Music</b> M · <b>Pause</b> Esc</div>
+        <div class="touch-only">On phone: joystick + buttons</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drip shop -->
+  <div id="shop" class="overlay hidden">
+    <div class="panel shop-panel">
+      <div class="panel-head">
+        <div><div class="kicker">5911 BRANDEIS</div><h2>DRIP SHOP</h2></div>
+        <div class="chip big" id="shop-silver">◆ 0</div>
+        <button class="x" id="shop-close" aria-label="Close">✕</button>
+      </div>
+      <div class="shop-body">
+        <div class="shop-side">
+          <canvas id="shop-preview" width="300" height="380"></canvas>
+          <div id="shop-stats"></div>
+        </div>
+        <div id="shop-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="pause" class="overlay hidden">
+    <div class="panel small-panel">
+      <h2>PAUSED</h2>
+      <div class="btn-col">
+        <button class="btn primary" id="btn-resume">RESUME</button>
+        <button class="btn" id="btn-music">MUSIC: ON</button>
+        <button class="btn danger" id="btn-restart">RESTART STORY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Knocked out -->
+  <div id="dead" class="overlay hidden">
+    <div class="panel small-panel">
+      <h2>DROPPED 💀</h2>
+      <p id="dead-line" class="blurb"></p>
+      <p class="muted">You lose 20% of your silver.</p>
+      <button class="btn primary" id="btn-respawn">RESPAWN AT 5911</button>
+    </div>
+  </div>
+
+  <!-- Ending -->
+  <div id="ending" class="overlay hidden">
+    <div class="panel small-panel">
+      <div class="kicker">STORY COMPLETE</div>
+      <h2>CHAIN SECURED ⛓️</h2>
+      <canvas id="end-art" width="480" height="300"></canvas>
+      <p class="blurb">"ur actually so cool for that 😭 everyone's talking about it. Happy you got it back." — Emma</p>
+      <div id="end-stats"></div>
+      <div class="btn-col">
+        <button class="btn primary" id="btn-freeroam">KEEP PLAYING (FREE ROAM)</button>
+        <button class="btn" id="btn-newgame2">NEW GAME</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/entities.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

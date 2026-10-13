@@ -1,0 +1,138 @@
+:root {
+  --bg: #0b0d14;
+  --panel: rgba(16, 18, 28, 0.92);
+  --line: rgba(255, 255, 255, 0.12);
+  --text: #f2f3f7;
+  --muted: #9aa0ad;
+  --silver: #dfe3e8;
+  --snap: #fffc00;
+  --red: #e5303d;
+  --good: #3ddc84;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
+canvas#game { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+.hidden { display: none !important; }
+button { font: inherit; cursor: pointer; }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud-left { position: absolute; top: 14px; left: 14px; width: min(260px, 44vw); }
+.hp { position: relative; height: 20px; border-radius: 10px; background: rgba(0,0,0,.55); border: 1px solid var(--line); overflow: hidden; }
+#hp-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #e5303d, #ff6b5a); transition: width .15s; }
+#hp-text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; font-weight: 800; text-shadow: 0 1px 2px #000; }
+.chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.chip { background: rgba(0,0,0,.55); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-weight: 800; font-size: 13px; }
+.chip.big { font-size: 16px; padding: 6px 14px; }
+#silver { color: var(--silver); }
+
+#objective { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); max-width: min(520px, 40vw);
+  background: rgba(0,0,0,.6); border: 1px solid var(--line); border-radius: 12px; padding: 6px 14px; text-align: center; }
+.obj-kicker { display: block; font-family: Bungee, sans-serif; font-size: 10px; color: var(--snap); letter-spacing: 1px; }
+#obj-text { font-weight: 700; font-size: 14px; }
+
+#snapmap { position: absolute; top: 14px; right: 14px; background: #fff; border-radius: 14px; padding: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+#minimap { display: block; width: 168px; height: 120px; border-radius: 10px; image-rendering: pixelated; }
+.snapmap-label { position: absolute; left: 10px; bottom: 8px; font-family: Bungee, sans-serif; font-size: 9px; color: #111; background: var(--snap); padding: 1px 6px; border-radius: 6px; }
+
+#bossbar { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: min(460px, 70vw); text-align: center; }
+.boss-name { font-family: Bungee, sans-serif; font-size: 14px; color: #ffd23f; text-shadow: 0 2px 4px #000; }
+.boss-track { height: 12px; background: rgba(0,0,0,.6); border: 1px solid #ffd23f; border-radius: 6px; overflow: hidden; margin-top: 4px; }
+#boss-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #7b2cbf, #c77dff); transition: width .15s; }
+
+#prompt { position: absolute; left: 50%; bottom: 90px; transform: translateX(-50%); background: rgba(0,0,0,.75); border: 1px solid var(--snap);
+  color: #fff; border-radius: 10px; padding: 8px 14px; font-weight: 800; font-size: 14px; white-space: nowrap; }
+#pause-btn { pointer-events: auto; position: absolute; top: 146px; right: 14px; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line);
+  background: rgba(0,0,0,.55); color: #fff; font-weight: 800; }
+
+#dmg { position: fixed; inset: 0; pointer-events: none; box-shadow: inset 0 0 120px rgba(229, 48, 61, .85); opacity: 0; transition: opacity .3s; }
+#dmg.on { opacity: 1; transition: none; }
+
+/* ---------- Snap card ---------- */
+#snap { position: fixed; right: 14px; top: 196px; width: min(270px, 80vw); background: #fff; color: #111; border-radius: 16px; padding: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.55); animation: snapIn .25s ease-out; cursor: pointer; z-index: 5; }
+@keyframes snapIn { from { transform: translateX(30px) scale(.95); opacity: 0; } to { transform: none; opacity: 1; } }
+.snap-head { display: flex; align-items: center; gap: 8px; }
+#snap-avatar { width: 44px; height: 44px; border-radius: 50%; }
+.snap-who { flex: 1; }
+.snap-name { font-weight: 800; font-size: 14px; }
+.snap-sub { font-size: 11px; color: #666; }
+#snap-timer { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ddd; }
+#snap-photo { width: 100%; margin-top: 8px; border-radius: 10px; display: block; }
+.snap-from { margin-top: 8px; font-size: 10px; font-weight: 800; color: #f23c57; letter-spacing: .5px; border-left: 3px solid #f23c57; padding-left: 6px; }
+#snap-text { font-size: 14px; line-height: 1.35; padding-left: 9px; font-weight: 600; }
+
+/* ---------- Touch ---------- */
+#touch { position: fixed; inset: 0; pointer-events: none; }
+#joy-zone { position: absolute; left: 0; bottom: 0; width: 50vw; height: 60vh; pointer-events: auto; }
+#joy { position: absolute; left: 40px; bottom: 40px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.25); }
+#knob { position: absolute; left: 35px; top: 35px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,.35); }
+#buttons { position: absolute; right: 18px; bottom: 30px; display: grid; grid-template-columns: 64px 64px; grid-template-rows: 64px 64px; gap: 12px; pointer-events: auto; }
+.tbtn { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); background: rgba(0,0,0,.45); color: #fff; font-size: 24px; font-weight: 800; }
+.tbtn.big { grid-row: span 2; height: 140px; border-radius: 32px; background: rgba(229,48,61,.45); }
+.tbtn:active { transform: scale(.94); background: rgba(255,255,255,.25); }
+
+/* ---------- Overlays ---------- */
+.overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(5, 6, 12, .55); backdrop-filter: blur(3px); z-index: 10; padding: 16px; overflow-y: auto; }
+#title { background: radial-gradient(ellipse at center, rgba(11,13,20,.35), rgba(5,6,12,.85)); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.6); max-width: 100%; }
+.title-card { width: min(560px, 100%); text-align: center; }
+.kicker { font-family: Bungee, sans-serif; font-size: 11px; color: var(--snap); letter-spacing: 1.5px; }
+h1 { font-family: Bungee, sans-serif; font-size: clamp(44px, 10vw, 72px); margin: 6px 0 0; line-height: 1;
+  background: linear-gradient(180deg, #ffffff, #b9c0ca 55%, #6d7480); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 0 #000); }
+.title-sub { font-family: Bungee, sans-serif; color: var(--red); font-size: clamp(16px, 4vw, 24px); letter-spacing: 3px; }
+h2 { font-family: Bungee, sans-serif; margin: 4px 0 10px; font-size: 26px; }
+#title-art { width: 100%; max-width: 360px; height: auto; margin: 10px auto 0; display: block; }
+.blurb { color: #d6d9e0; line-height: 1.45; font-size: 15px; }
+.muted { color: var(--muted); font-size: 13px; }
+.btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 12px 0; }
+.btn-col { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.btn { border: 1px solid var(--line); background: #222634; color: #fff; padding: 12px 22px; border-radius: 12px; font-family: Bungee, sans-serif; font-size: 15px; letter-spacing: 1px; }
+.btn:hover { background: #2d3243; }
+.btn.primary { background: var(--snap); color: #111; border-color: var(--snap); }
+.btn.primary:hover { filter: brightness(.92); }
+.btn.danger { color: #ff8a93; }
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; text-align: left; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.controls b { color: #fff; }
+.touch-only { display: none; }
+@media (pointer: coarse) { .touch-only { display: block; } }
+.small-panel { width: min(440px, 100%); text-align: center; }
+#end-art { width: 100%; max-width: 300px; height: auto; }
+#end-stats { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Shop ---------- */
+.shop-panel { width: min(820px, 100%); }
+.panel-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.panel-head > div:first-child { flex: 1; }
+.x { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: #222634; color: #fff; }
+.shop-body { display: grid; grid-template-columns: 170px 1fr; gap: 16px; }
+.shop-side { text-align: center; }
+#shop-preview { width: 150px; height: 190px; background: radial-gradient(circle at 50% 40%, #2b3042, #12141c); border-radius: 14px; }
+#shop-stats { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; text-align: left; }
+#shop-stats b { color: #fff; }
+#shop-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; max-height: 60vh; overflow-y: auto; padding-right: 4px; }
+.item { border: 1px solid var(--line); border-radius: 14px; padding: 10px; background: #171a26; display: flex; flex-direction: column; gap: 4px; }
+.item.equipped { border-color: var(--snap); box-shadow: 0 0 0 1px var(--snap) inset; }
+.item-top { display: flex; align-items: center; gap: 8px; }
+.item-emoji { font-size: 26px; }
+.item-name { font-weight: 800; font-size: 14px; }
+.item-slot { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.item-desc { font-size: 12px; color: #c4c8d2; flex: 1; }
+.item button { margin-top: 4px; padding: 8px; border-radius: 10px; border: 0; font-weight: 800; background: #2d3243; color: #fff; }
+.item button.buy { background: var(--snap); color: #111; }
+.item button:disabled { opacity: .45; cursor: default; }
+
+@media (max-width: 640px) {
+  #objective { top: auto; bottom: 244px; max-width: 76vw; padding: 4px 10px; }
+  #obj-text { font-size: 12px; }
+  #snapmap { transform: scale(.75); transform-origin: top right; }
+  #pause-btn { top: 112px; }
+  #snap { top: 108px; left: 10px; right: auto; width: min(230px, 58vw); padding: 8px; }
+  #snap-photo { display: none !important; }
+  #snap-text { font-size: 13px; }
+  .shop-body { grid-template-columns: 1fr; }
+  #shop-preview { width: 120px; height: 152px; }
+  #prompt { bottom: 200px; }
+}
