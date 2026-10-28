@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#2f8f5b">
+  <title>Ella's World</title>
+  <meta name="description" content="Run a magical rainforest café: make food and drinks, look after your dog and the axolotls, and serve your family.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <canvas id="scene"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" hidden>
+      <div class="hud-chips">
+        <span class="chip" id="coins" title="Coins: earned by serving customers">🪙 0</span>
+        <span class="chip" id="hearts" title="Hearts: earned by looking after animals">❤️ 0</span>
+        <span class="chip" id="day">☀️ Day 1</span>
+      </div>
+      <div class="hud-btns">
+        <button class="hud-btn" id="shop-btn">🛍️ Shop</button>
+        <button class="hud-btn" id="settings-btn" aria-label="Settings">⚙️</button>
+      </div>
+    </div>
+    <div id="hint" hidden></div>
+    <div id="tray" hidden></div>
+
+    <!-- Kitchen -->
+    <div id="kitchen" class="modal" hidden>
+      <div class="panel kitchen-panel">
+        <header class="panel-head"><h2 id="k-title"></h2><button class="close" data-close="kitchen" aria-label="Back">✕</button></header>
+        <div class="k-body">
+          <div class="recipe-card">
+            <div class="rc-kicker">RECIPE</div>
+            <div class="rc-icon" id="k-icon"></div>
+            <div class="rc-name" id="k-name"></div>
+            <ul id="k-steps"></ul>
+          </div>
+          <div class="work">
+            <div id="k-vessel" class="vessel"></div>
+            <div id="k-msg" class="k-msg"></div>
+            <button id="k-action" class="big-btn" hidden></button>
+            <div id="k-prog" class="progress" hidden><div></div></div>
+          </div>
+          <div class="shelf-wrap">
+            <div class="shelf-label">Tap the ingredients 👇</div>
+            <div class="shelf" id="k-shelf"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shop -->
+    <div id="shop" class="modal" hidden>
+      <div class="panel shop-panel">
+        <header class="panel-head"><h2>🛍️ Café Shop</h2><button class="close" data-close="shop" aria-label="Close">✕</button></header>
+        <p class="panel-sub">Spend 🪙 coins from customers and ❤️ hearts from looking after animals.</p>
+        <div class="shop-grid" id="shop-grid"></div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="settings" class="modal" hidden>
+      <div class="panel settings-panel">
+        <header class="panel-head"><h2>⚙️ Settings</h2><button class="close" data-close="settings" aria-label="Close">✕</button></header>
+        <div id="settings-fields"></div>
+        <div class="settings-foot"><button class="link-btn" id="reset-btn">Start over from Day 1</button></div>
+      </div>
+    </div>
+
+    <!-- End of day -->
+    <div id="summary" class="modal" hidden>
+      <div class="panel summary-panel">
+        <div class="sum-stars">⭐⭐⭐</div>
+        <h2 id="sum-title"></h2>
+        <p id="sum-text"></p>
+        <div class="sum-earn"><span class="chip" id="sum-coins"></span><span class="chip" id="sum-hearts"></span></div>
+        <p id="sum-unlock" class="sum-unlock" hidden></p>
+        <button id="next-day" class="big-btn"></button>
+      </div>
+    </div>
+
+    <!-- Title & first-time setup -->
+    <div id="title" class="screen">
+      <div class="title-card">
+        <div class="title-kicker">🌿 Magical Rainforest Pet Café 🌿</div>
+        <h1>Ella's World</h1>
+        <div id="title-main">
+          <p class="title-cafe" id="title-cafe"></p>
+          <button id="play-btn" class="big-btn">▶ Play</button>
+          <button id="title-edit" class="link-btn">✏️ Change names</button>
+        </div>
+        <div id="title-setup" hidden>
+          <div id="setup-fields"></div>
+          <button id="go-btn" class="big-btn">Open the café! 🌺</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="rotate">🔄 Turn your tablet or phone sideways for a bigger café!</div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

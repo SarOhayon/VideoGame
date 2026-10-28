@@ -1,5 +1,7 @@
 # DRIP DROP: Brandeis Block
 
+> This repo also has **[Ella's World](ellas-world/)**, a magical rainforest pet café game for Ella. It lives at `/ellas-world/`.
+
 A top-down action-adventure game set in Côte Saint-Luc, QC. It runs in any browser on a computer or phone. There's no install and no build step.
 
 ## Story
